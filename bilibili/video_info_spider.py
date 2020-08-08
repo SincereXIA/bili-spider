@@ -7,7 +7,9 @@ from bilibili.common import get_response
 
 
 class VideoInfoSpider:
-    def __init__(self):
+    use_proxy:bool
+    def __init__(self, use_proxy=False):
+        self.use_proxy = use_proxy
         for i in range(3):
             try:
                 self._ua = UserAgent()
@@ -38,7 +40,8 @@ class VideoInfoSpider:
             headers=headers,
             params={
                 'aid': avid
-            }
+            },
+            use_proxy=self.use_proxy,
         )
         js = rs.json()
         return js['data'][0]['cid']
@@ -57,7 +60,8 @@ class VideoInfoSpider:
             headers = headers,
             params= {
                 'aid': avid
-            }
+            },
+            use_proxy=self.use_proxy,
         )
         js = rs.json()
         return js['data']
@@ -74,7 +78,8 @@ class VideoInfoSpider:
         aid = video.bvid2aid(bvid)
         rs = get_response(
             url=f"https://api.bilibili.com/x/player.so?id=cid%3A{cid}&aid={aid}",
-            headers=headers
+            headers=headers,
+            use_proxy=self.use_proxy,
         )
         search_obj = re.search("<online_count>([0-9]*)</online_count>", rs.text, )
         online = int(search_obj.group(1))
@@ -93,7 +98,8 @@ class VideoInfoSpider:
         aid = video.bvid2aid(bvid)
         rs = get_response(
             url=f"https://api.bilibili.com/x/player.so?id=cid%3A{cid}&aid={aid}",
-            headers=headers
+            headers=headers,
+            use_proxy=self.use_proxy,
         )
         search_obj = re.search("<online_count>([0-9]*)</online_count>", rs.text, )
         return int(search_obj.group(1))

@@ -1,24 +1,24 @@
 import requests
 from log import logger
+from config import *
 
 class NetworkStatusError(Exception):
     pass
 
-#proxies = { "http": "http://127.0.0.1:8889", "https": "http://127.0.0.1:8889", }
-proxies = {}
 
-def get_response(url: str,  headers: dict, params={}):
+
+def get_response(url: str,  headers: dict, params={}, use_proxy = False):
     max_retry = 3
     for i in range(max_retry + 1):
         try:
-            if proxies:
+            if use_proxy:
                 rs = requests.request(
                     "GET",
                     url=url,
                     params=params,
                     headers=headers,
-                    timeout=4,
-                    proxies=proxies
+                    timeout=15,
+                    proxies=PROXY
                 )
             else:
                 rs = requests.request(
